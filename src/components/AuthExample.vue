@@ -1,6 +1,6 @@
 <template>
   <div class="login-container">
-    <h2 class="title is-4">Nice to see you again</h2>
+    <h2 class="title is-4">Nice to see you again Matis </h2>
     <form @submit.prevent="login">
       <div class="field">
         <label class="label" for="email">Email:</label>
@@ -57,9 +57,7 @@ export default {
 };
 </script>
 
-<style>
- 
-</style>
+
 
 
 

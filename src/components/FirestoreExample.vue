@@ -3,7 +3,7 @@
     
     <form @submit.prevent="login">
       <div class="field">
-        <label class="label" for="email">Email: 1 </label>
+        <label class="label" for="email">Email: </label>
         <div class="control">
           <input class="input" type="email" v-model="email" placeholder="Enter your email" required />
         </div>
@@ -24,10 +24,12 @@
   </div>
 </template>
 
+
 <script>
 import { ref } from 'vue';
 import { signInWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
-import { auth } from '../firebase.js';
+import { getDoc, doc } from 'firebase/firestore';
+import { auth, db } from '../firebase.js';
 
 export default {
   name: 'AuthExample',
@@ -38,9 +40,20 @@ export default {
 
     const login = async () => {
       try {
-        await signInWithEmailAndPassword(auth, email.value, password.value);
+        // Référence au document utilisateur dans Firestore
+        const userDocRef = doc(db, 'users', email.value);
+        const userDoc = await getDoc(userDocRef);
+
+        if (userDoc.exists()) {
+          console.log('Utilisateur trouvé dans Firestore');
+          // Si l'utilisateur existe dans Firestore, essaye de le connecter
+          await signInWithEmailAndPassword(auth, email.value, password.value);
+          console.log('Utilisateur connecté avec succès');
+        } else {
+          console.error('Utilisateur non trouvé dans la base de données.');
+        }
       } catch (error) {
-        console.error('Error logging in:', error);
+        console.error('Erreur lors de la connexion:', error);
       }
     };
 
@@ -57,6 +70,8 @@ export default {
   },
 };
 </script>
+
+
 
 <style scoped>
 .login-container {
